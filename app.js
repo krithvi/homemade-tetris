@@ -1,10 +1,12 @@
-# Home-made Tetris
+document.addEventListener('DOMContentLoaded',() => {
+    const grid = document.querySelector('.grid')
+    let squares = Array.from(document.querySelectorAll('.grid div'))
+    const ScoreDisplay = document.querySelector('#score')
+    const StartBtn = document.querySelector('#start-button')
+    const w = 10
 
-## Playing Grid and Tetrominoes
-Construct basic grid and populate Tetrominoes' values
-
-```js
-const lTetromino = [
+    // Tetrominoes
+    const lTetromino = [
         [1,w+1,w*2+1,2],
         [w,w+1,w+2,w*2+2],
         [1,w+1,w*2,w*2+1],
@@ -40,6 +42,21 @@ const lTetromino = [
     ]
 
     const theTetrominoes = [lTetromino, zTetromino, tTetromino, oTetromino, iTetromino]
-```
+    console.log(theTetrominoes)
 
-Built with the help of [this freeCodeCamp tutorial](https://www.freecodecamp.org/news/learn-javascript-by-creating-a-tetris-game/).
+    let currentPosition = 4
+    let currentRotation = 0
+    let current = theTetrominoes[0][0]
+
+    // draw the first rotation in the first tetromino
+    function draw() {
+        current.forEach(index => {
+            squares[currentPosition + index].classList.add('tetromino')
+        })
+    }
+
+    draw()
+
+
+
+})
