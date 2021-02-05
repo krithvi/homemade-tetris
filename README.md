@@ -1,5 +1,14 @@
 # Home-made Tetris
 
+## How-To Play
+* Move Left/Down to place Tetromino in required position. 
+* Rotate Tetromino for required rotation
+### Controls:
+* Rotate = UpArrow / W
+* Down = DownArrow / S
+* Left = LeftArrow / A
+* Right = RightArrow / D
+
 ## Playing Grid and Tetrominoes
 Construct basic grid and populate Tetrominoes' values
 
