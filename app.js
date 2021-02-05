@@ -2,11 +2,21 @@ document.addEventListener('DOMContentLoaded',() => {
     const grid = document.querySelector('.grid')
     let squares = Array.from(document.querySelectorAll('.grid div'))
     const scoreDisplay = document.querySelector('#score')
+    const highScore = document.querySelector('#high-score')
     const startBtn = document.querySelector('#start-button')
     const w = 10
     let nextRandom = 0
     let timerId
     let score = 0
+
+    // Tetrominoes' colors
+    const colors = [
+        'blue',
+        'red',
+        'purple',
+        'green',
+        'orange' 
+    ]
 
     // Tetrominoes
     const lTetromino = [
@@ -45,7 +55,6 @@ document.addEventListener('DOMContentLoaded',() => {
     ]
 
     const theTetrominoes = [lTetromino, zTetromino, tTetromino, oTetromino, iTetromino]
-    console.log(theTetrominoes)
 
     let currentPosition = 4
     let currentRotation = 0
@@ -58,6 +67,7 @@ document.addEventListener('DOMContentLoaded',() => {
     function draw() {
         current.forEach(index => {
             squares[currentPosition + index].classList.add('tetromino')
+            squares[currentPosition + index].style.backgroundColor = colors[random]
         })
     }
 
@@ -65,6 +75,7 @@ document.addEventListener('DOMContentLoaded',() => {
     function undraw() {
         current.forEach(index => {
             squares[currentPosition + index].classList.remove('tetromino')
+            squares[currentPosition + index].style.backgroundColor = ''
         })
     }
 
@@ -93,7 +104,6 @@ document.addEventListener('DOMContentLoaded',() => {
         currentPosition += w
         draw()
         freeze()
-        console.log(current)
     }
 
     // freeze function
@@ -116,13 +126,10 @@ document.addEventListener('DOMContentLoaded',() => {
     function moveLeft() {
         undraw()
         const isAtLeftEdge = current.some(index => (currentPosition + index) % w === 0)
-
         if(!isAtLeftEdge) currentPosition -=1
-
         if(current.some(index => squares[currentPosition + index].classList.contains('taken'))) {
             currentPosition +=1
         }
-
         draw()
     }
 
@@ -130,13 +137,10 @@ document.addEventListener('DOMContentLoaded',() => {
     function moveRight() {
         undraw()
         const isAtRightEdge = current.some(index => (currentPosition + index) % w === w-1)
-
         if(!isAtRightEdge) currentPosition +=1
-
         if(current.some(index => squares[currentPosition + index].classList.contains('taken'))) {
             currentPosition -=1
         }
-
         draw()
     }
 
@@ -154,7 +158,7 @@ document.addEventListener('DOMContentLoaded',() => {
     // show up-next teromino in mini-grid
     const displaySquares = document.querySelectorAll('.mini-grid div')
     const displayWidth = 4
-    let displayIndex = 0
+    const displayIndex = 0
 
     // Tetrominoes without rotations
     const upNextTetrominoes = [
@@ -170,9 +174,11 @@ document.addEventListener('DOMContentLoaded',() => {
         // remove any trace of tetromino from grid
         displaySquares.forEach(square => {
             square.classList.remove('tetromino')
+            square.style.backgroundColor = ''
         })
         upNextTetrominoes[nextRandom].forEach( index => {
             displaySquares[displayIndex +index].classList.add('tetromino')
+            displaySquares[displayIndex +index].style.backgroundColor = colors[nextRandom]
         })
     }
 
@@ -200,7 +206,7 @@ document.addEventListener('DOMContentLoaded',() => {
                 row.forEach(index => {
                     squares[index].classList.remove('taken')
                     squares[index].classList.remove('tetromino')
-
+                    squares[index].style.backgroundColor = ''
                 })
                 const squaresRemoved = squares.splice(i,w)
                 squares = squaresRemoved.concat(squares)
@@ -211,6 +217,10 @@ document.addEventListener('DOMContentLoaded',() => {
 
     // game over
     function gameOver() {
+        if(highScore<score) {
+            console.log(score)
+            highScore.innerHTML = score
+        }
         if(current.some(index => squares[currentPosition + index].classList.contains('taken'))) {
             scoreDisplay.innerHTML = 'end'
             clearInterval(timerId)
