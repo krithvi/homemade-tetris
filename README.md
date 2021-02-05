@@ -1,6 +1,7 @@
 # Home-made Tetris
 
 ## How-To Play
+* Click `Start/Pause` to start the game.
 * Move Left/Down to place Tetromino in required position. 
 * Rotate Tetromino for required rotation
 ### Controls:
@@ -50,5 +51,7 @@ const lTetromino = [
 
     const theTetrominoes = [lTetromino, zTetromino, tTetromino, oTetromino, iTetromino]
 ```
+
+A mini-grid beside the main grid shows the up-next Tetromino
 
 Built with the help of [this freeCodeCamp tutorial](https://www.freecodecamp.org/news/learn-javascript-by-creating-a-tetris-game/).
