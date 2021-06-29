@@ -4,10 +4,54 @@ document.addEventListener('DOMContentLoaded',() => {
     const scoreDisplay = document.querySelector('#score')
     const highScore = document.querySelector('#high-score')
     const startBtn = document.querySelector('#start-button')
+    const resetBtn = document.querySelector('#reset')
     const w = 10
     let nextRandom = 0
     let timerId
     let score = 0
+    let hscore = 0
+
+    //document.cookie = 'ppkcookie1=testcookie; expires=Thu, 2 Aug 2021 20:47:11 UTC; path=/'
+
+//functions for setting cookies
+function setCookie(cname,cvalue,exdays) {
+	if (exdays) {
+		var date = new Date()
+		date.setTime(date.getTime()+(exdays*24*60*60*1000))
+		var expires = "; expires="+date.toGMTString()
+	}
+	else var expires = ""
+	document.cookie = cname+"="+cvalue+expires+"; path=/"
+}
+function getCookie(cname) {
+	var name = cname + "="
+	var ca = document.cookie.split(';')
+	for(var i=0;i < ca.length;i++) {
+		var c = ca[i];
+		while (c.charAt(0)==' ') c = c.substring(1,c.length)
+		if (c.indexOf(name) == 0) {
+      return c.substring(name.length,c.length)
+    }
+	}
+	return null;
+}
+
+//highscore cookie
+var hs = getCookie("highscore")
+if (hs != null) {
+  hscore = Number(hs)
+  highScore.innerHTML = hscore
+} else {
+  if (hs != "" && hs != null) {
+  setCookie("highscore", hscore.toString(), 365)
+  }
+}
+
+    //assigns a div for the "game over" text and appends it to the grid when the condition happens
+    const gameOverTxt = document.createElement('div')
+    gameOverTxt.id = 'gameover'
+    grid.appendChild(gameOverTxt)
+    gameOverTxt.classList.add('no-display')
 
     // Tetrominoes' colors
     const colors = [
@@ -182,7 +226,7 @@ document.addEventListener('DOMContentLoaded',() => {
         })
     }
 
-    // add functionality to button
+    // add functionality to start button
     startBtn.addEventListener('click', () => {
         if(timerId) {
             clearInterval(timerId)
@@ -193,6 +237,34 @@ document.addEventListener('DOMContentLoaded',() => {
             nextRandom = Math.floor(Math.random()*theTetrominoes.length)
             displayUpNext()
         }
+    })
+
+    //add functionality to the reset button
+    resetBtn.addEventListener('click', () => {
+        undraw()
+        grid.appendChild(gameOverTxt)
+        clearInterval(timerId)
+        timerId = null
+        for (let i = 0; i < 199; i += w) {
+          const row = [i, i + 1, i + 2, i + 3, i + 4, i + 5, i + 6, i + 7, i + 8, i + 9]
+          row.forEach(index => {
+            squares[index].classList.remove('taken')
+            squares[index].classList.remove('tetromino')
+            squares[index].style.backgroundColor = ''
+          })
+        }
+        displaySquares.forEach(square => {
+          square.classList.remove('tetromino')
+          square.classList.remove('taken')
+          square.style.backgroundColor = ''
+        })
+        random = nextRandom
+        nextRandom = Math.floor(Math.random() * theTetrominoes.length)
+        current = theTetrominoes[random][currentRotation]
+        currentPosition = 4
+        gameOverTxt.innerHTML = ''
+        grid.removeChild(gameOverTxt)
+        scoreDisplay.innerHTML = 0
     })
 
     // add score
@@ -211,21 +283,34 @@ document.addEventListener('DOMContentLoaded',() => {
                 const squaresRemoved = squares.splice(i,w)
                 squares = squaresRemoved.concat(squares)
                 squares.forEach(cell => grid.appendChild(cell))
+                if(hscore<score) {
+                    hscore = score
+                    highScore.innerHTML = hscore
+                    setCookie("highscore", hscore.toString(), 365)
+                }
             }
         }
     }
 
     // game over
     function gameOver() {
-        if(highScore<score) {
-            console.log(score)
-            highScore.innerHTML = score
-        }
         if(current.some(index => squares[currentPosition + index].classList.contains('taken'))) {
-            scoreDisplay.innerHTML = 'end'
+            scoreDisplay.innerHTML = '-'
+            grid.appendChild(gameOverTxt)
+            gameOverTxt.innerHTML = '<h3>GAME OVER</h3>'
+            gameOverTxt.classList.remove('no-display')
+            gameOverTxt.classList.add('on-display')
             clearInterval(timerId)
+            timerId = null
+            for (let i = 0; i < 199; i +=w) {
+                const row = [i, i+1, i+2, i+3, i+4, i+5, i+6, i+7, i+8, i+9]
+                row.forEach(index => {
+                    squares[index].classList.remove('taken')
+                    squares[index].classList.remove('tetromino')
+                    squares[index].style.backgroundColor = ''
+                })
+            }
         }
     }
-
 
 })
